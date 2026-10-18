@@ -2,6 +2,7 @@ import { withSentryConfig } from "@sentry/nextjs";
 import { withAxiom } from "next-axiom";
 import nextMdx from "@next/mdx";
 import { realpathSync } from "node:fs";
+import { release } from "node:os";
 import path from "node:path";
 import { env } from "./env";
 import { isIndexingAllowed } from "./utils/indexing";
@@ -15,6 +16,9 @@ const withMDX = nextMdx({
 
 const isDevelopment = process.env.NODE_ENV === "development";
 const isProductionBuild = process.env.NODE_ENV === "production";
+const isWsl1 =
+  process.platform === "linux" &&
+  release().toLowerCase().endsWith("-microsoft");
 const playwrightRunId = process.env.PLAYWRIGHT_RUN_ID;
 const repoRoot = path.resolve(import.meta.dirname, "../..");
 const nextPackageRoot = path.dirname(
@@ -59,6 +63,8 @@ const nextConfig: NextConfig = {
           },
           ...(isDevelopment
             ? {
+                // WSL1's Windows filesystem rejects the directory fsync this cache requires.
+                turbopackFileSystemCacheForDev: !isWsl1,
                 // This app has a large route graph. Avoid front-loading all
                 // route modules into memory at startup during local
                 // development.

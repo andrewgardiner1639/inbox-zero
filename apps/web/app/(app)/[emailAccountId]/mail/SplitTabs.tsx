@@ -20,7 +20,7 @@ export type MailSplitTab = {
 export type SplitTabsProps = {
   splits: MailSplitTab[];
   activeSplitId: string | null;
-  /** Conversations currently in each split. Missing entries and zeros stay blank. */
+  /** Unread conversations in each split. Missing entries and zeros stay blank. */
   countsById?: ReadonlyMap<string, number>;
   onSelect: (splitId: string) => void;
   onDelete: (splitId: string) => void;
@@ -92,7 +92,7 @@ export function SplitTabs({
                 aria-label={split.name}
                 aria-current={active ? "true" : undefined}
                 aria-description={
-                  countLabel ? `${countLabel} in this view` : undefined
+                  countLabel ? `${countLabel} unread in this view` : undefined
                 }
                 className={cn(
                   "flex items-center gap-1 rounded-full py-0.5 pr-2 pl-2.5 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
